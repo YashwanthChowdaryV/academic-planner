@@ -42,21 +42,32 @@ export default function SignupPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-side" style={{ background: "var(--secondary)" }}>
-        <div className="auth-side-content">
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+      {/* ── Left: Image + Branding ── */}
+      <div className="auth-left">
+        <img
+          src="https://images.unsplash.com/photo-1513258496099-48168024aec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt="Academic planning"
+        />
+        <div className="auth-left-overlay" style={{ background: "linear-gradient(160deg, rgba(14, 165, 233, 0.88) 0%, rgba(124, 58, 237, 0.82) 50%, rgba(16, 185, 129, 0.78) 100%)" }} />
+        <div className="auth-left-content">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="logo-badge" style={{ borderColor: 'rgba(34, 197, 94, 0.4)' }}>
-              <Sparkles size={24} color="white" fill="white" />
+            <div className="auth-brand-logo">
+              <Sparkles size={22} color="white" fill="white" />
             </div>
             <h1>Your Future, Planned with AI.</h1>
             <p>Structure your academic goals and track your success with precision.</p>
           </motion.div>
-          
-          <div className="auth-features">
+
+          <motion.div
+            className="auth-features"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             <div className="auth-feature">
               <div className="feature-dot" />
               <span>Smart Milestone Visualization</span>
@@ -65,29 +76,28 @@ export default function SignupPage() {
               <div className="feature-dot" />
               <span>Personalized Study Tracks</span>
             </div>
-          </div>
+            <div className="auth-feature">
+              <div className="feature-dot" />
+              <span>AI Roadmap Generation</span>
+            </div>
+          </motion.div>
         </div>
-        <img 
-          src="https://images.unsplash.com/photo-1513258496099-48168024aec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-          alt="Productivity" 
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-        <div className="auth-overlay" style={{ background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.9) 0%, rgba(34, 197, 94, 0.8) 100%)' }} />
       </div>
 
-      <div className="auth-main">
-        <motion.div 
+      {/* ── Right: Form ── */}
+      <div className="auth-right">
+        <motion.div
           className="auth-card"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <header className="auth-header">
-              <h2>Join AcadPlan</h2>
-              <p>Start your AI-powered journey today</p>
-            </header>
+          <header className="auth-header">
+            <h2>Join AcadPlan</h2>
+            <p>Start your AI-powered journey today</p>
+          </header>
 
+          <form className="auth-form" onSubmit={handleSubmit}>
             {error && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="alert alert-error">
                 {error}
@@ -158,11 +168,13 @@ export default function SignupPage() {
               </div>
             </div>
 
-            <motion.button 
-              type="submit" 
-              className="btn btn-primary btn-lg btn-full" 
+            <motion.button
+              type="submit"
+              className="btn btn-primary btn-lg btn-full"
               disabled={loading}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              style={{ marginTop: "0.5rem" }}
             >
               {loading ? <Loader className="spinner" size={20} /> : <>Create Account <ArrowRight size={18} /></>}
             </motion.button>
@@ -176,4 +188,3 @@ export default function SignupPage() {
     </div>
   );
 }
-

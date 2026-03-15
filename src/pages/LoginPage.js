@@ -35,21 +35,32 @@ export default function LoginPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-side">
-        <div className="auth-side-content">
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
+      {/* ── Left: Image + Branding ── */}
+      <div className="auth-left">
+        <img
+          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+          alt="Focused study"
+        />
+        <div className="auth-left-overlay" />
+        <div className="auth-left-content">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="logo-badge">
-              <Sparkles size={24} color="white" fill="white" />
+            <div className="auth-brand-logo">
+              <Sparkles size={22} color="white" fill="white" />
             </div>
             <h1>Empower Your Learning Journey.</h1>
             <p>Join thousands of students using AI to master their academic roadmap.</p>
           </motion.div>
-          
-          <div className="auth-features">
+
+          <motion.div
+            className="auth-features"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             <div className="auth-feature">
               <div className="feature-dot" />
               <span>AI-Generated Study Plans</span>
@@ -58,29 +69,28 @@ export default function LoginPage() {
               <div className="feature-dot" />
               <span>Dynamic Progress Tracking</span>
             </div>
-          </div>
+            <div className="auth-feature">
+              <div className="feature-dot" />
+              <span>Smart Streak & Analytics</span>
+            </div>
+          </motion.div>
         </div>
-        <img 
-          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-          alt="Collaboration" 
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        />
-        <div className="auth-overlay" />
       </div>
 
-      <div className="auth-main">
-        <motion.div 
+      {/* ── Right: Form ── */}
+      <div className="auth-right">
+        <motion.div
           className="auth-card"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
-          <form className="auth-form" onSubmit={handleSubmit}>
-            <header className="auth-header">
-              <h2>Welcome Back</h2>
-              <p>Sign in to your AcadPlan account</p>
-            </header>
+          <header className="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Sign in to your AcadPlan account</p>
+          </header>
 
+          <form className="auth-form" onSubmit={handleSubmit}>
             {error && (
               <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="alert alert-error">
                 {error}
@@ -115,11 +125,13 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <motion.button 
-              type="submit" 
-              className="btn btn-primary btn-lg btn-full" 
+            <motion.button
+              type="submit"
+              className="btn btn-primary btn-lg btn-full"
               disabled={loading}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              style={{ marginTop: "0.5rem" }}
             >
               {loading ? <Loader className="spinner" size={20} /> : <>Sign In <ArrowRight size={18} /></>}
             </motion.button>
@@ -133,4 +145,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
