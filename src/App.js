@@ -19,6 +19,8 @@ import CalendarPage from "./pages/CalendarPage";
 import TimerPage from "./pages/TimerPage";
 import AchievementsPage from "./pages/AchievementsPage";
 import ActivityPage from "./pages/ActivityPage";
+import SessionsPage from "./pages/SessionsPage";
+import GoalsPage from "./pages/GoalsPage";
 import PageTransition from "./components/ui/PageTransition";
 
 import "./styles/global.css";
@@ -65,6 +67,8 @@ export default function App() {
             <Route path="/timer" element={<Protected><TimerPage /></Protected>} />
             <Route path="/achievements" element={<Protected><AchievementsPage /></Protected>} />
             <Route path="/activity" element={<Protected><ActivityPage /></Protected>} />
+            <Route path="/sessions" element={<Protected><SessionsPage /></Protected>} />
+            <Route path="/goals" element={<Protected><GoalsPage /></Protected>} />
 
             {/* Default */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />

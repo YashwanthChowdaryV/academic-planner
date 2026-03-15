@@ -16,6 +16,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { recalculateStats } from "./statsService";
 
 // ── Plans ────────────────────────────────────────────────────
 
@@ -40,6 +41,10 @@ export async function createPlan(uid, inputPayload, planText, phaseCount) {
   batch.set(progressRef, { phases, updatedAt: serverTimestamp() });
 
   await batch.commit();
+
+  // Trigger stats update
+  recalculateStats(uid).catch(console.error);
+
   return planRef.id;
 }
 
@@ -62,6 +67,8 @@ export async function getPlan(uid, planId) {
 export async function deletePlan(uid, planId) {
   await deleteDoc(doc(db, "users", uid, "plans", planId));
   await deleteDoc(doc(db, "users", uid, "progress", planId));
+  // Trigger stats update
+  recalculateStats(uid).catch(console.error);
 }
 
 // ── Progress ─────────────────────────────────────────────────

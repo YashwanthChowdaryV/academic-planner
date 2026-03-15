@@ -16,8 +16,10 @@ import {
   Sparkles,
   Calendar,
   Timer,
+  Clock,
   Trophy,
   Activity,
+  Target,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -32,6 +34,8 @@ const NAV_ITEMS = [
     { to: "/history", icon: <Library size={17} />, label: "My Plans" },
     { to: "/calendar", icon: <Calendar size={17} />, label: "Calendar" },
     { to: "/timer", icon: <Timer size={17} />, label: "Study Timer" },
+    { to: "/sessions", icon: <Clock size={17} />, label: "Study Sessions" },
+    { to: "/goals", icon: <Target size={17} />, label: "My Goals" },
   ]},
   { group: "Progress", color: "amber", items: [
     { to: "/achievements", icon: <Trophy size={17} />, label: "Achievements" },
