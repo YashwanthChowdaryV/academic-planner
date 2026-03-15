@@ -1,5 +1,5 @@
 const API_URL =
-  "https://haleigh-nonextendible-unduteously.ngrok-free.dev/generate-plan";
+  "https://academic-planner-backend-1q8m.onrender.com/generate-plan";
 
 const TIMEOUT_MS = 30000;
 const MAX_RETRIES = 2;

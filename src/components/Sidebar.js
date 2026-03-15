@@ -1,49 +1,108 @@
 // src/components/Sidebar.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { getSettings } from "../services/extendedService";
+import OnboardingModal from "./ui/OnboardingModal";
+import { 
+  LayoutDashboard, 
+  PenTool, 
+  Library, 
+  LineChart, 
+  Settings, 
+  LogOut, 
+  CalendarCheck,
+  ChevronRight,
+  Sparkles,
+  Calendar,
+  Timer,
+  Trophy,
+  Activity,
+} from "lucide-react";
 
 const NAV_ITEMS = [
-  { to: "/dashboard", icon: "📊", label: "Dashboard" },
-  { to: "/planner", icon: "✏️", label: "New Plan" },
-  { to: "/history", icon: "📚", label: "History" },
-  { to: "/analytics", icon: "📈", label: "Analytics" },
-  { to: "/profile", icon: "👤", label: "Profile" },
+  { group: "Overview", color: "blue", items: [
+    { to: "/dashboard", icon: <LayoutDashboard size={17} />, label: "Dashboard" },
+    { to: "/analytics", icon: <LineChart size={17} />, label: "Analytics" },
+    { to: "/activity", icon: <Activity size={17} />, label: "Activity Feed" },
+  ]},
+  { group: "Planning", color: "green", items: [
+    { to: "/planner", icon: <PenTool size={17} />, label: "Create Plan" },
+    { to: "/tracker", icon: <CalendarCheck size={17} />, label: "Daily Tracker" },
+    { to: "/history", icon: <Library size={17} />, label: "My Plans" },
+    { to: "/calendar", icon: <Calendar size={17} />, label: "Calendar" },
+    { to: "/timer", icon: <Timer size={17} />, label: "Study Timer" },
+  ]},
+  { group: "Progress", color: "amber", items: [
+    { to: "/achievements", icon: <Trophy size={17} />, label: "Achievements" },
+  ]},
+  { group: "Account", color: "muted", items: [
+    { to: "/profile", icon: <Settings size={17} />, label: "Settings" },
+  ]}
 ];
 
-export default function Sidebar() {
-  const { profile, logout } = useAuth();
-  const navigate = useNavigate();
+const LEVEL_LABELS = {
+  school: "Beginner", beginner: "Beginner",
+  inter: "Intermediate", intermediate: "Intermediate",
+  btech: "Pro", pro: "Pro", advanced: "Pro",
+};
 
-  async function handleLogout() {
+export default function Sidebar() {
+  const { user, profile, logout } = useAuth();
+  const navigate = useNavigate();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    getSettings(user.uid).then(s => {
+      if (!s.onboarded) setShowOnboarding(true);
+    }).catch(() => {});
+  }, [user?.uid]);
+
+  const handleLogout = async () => {
     await logout();
     navigate("/login");
-  }
+  };
 
   const initials = profile?.name
-    ? profile.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
-    : "?";
+    ? profile.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
+    : "??";
+
+  const displayLevel = LEVEL_LABELS[profile?.academicLevel] || profile?.academicLevel || "Beginner";
 
   return (
     <>
-      {/* Desktop Sidebar */}
+      {showOnboarding && (
+        <OnboardingModal uid={user.uid} onClose={() => setShowOnboarding(false)} />
+      )}
+
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <h2>🎓 AcadPlan AI</h2>
-          <p>AI Academic Planner</p>
+          <div className="logo-icon">
+            <Sparkles size={18} color="white" fill="white" />
+          </div>
+          <div>
+            <h2>AcadPlan AI</h2>
+            <p>Academic Master</p>
+          </div>
         </div>
 
-        <nav className="sidebar-nav" aria-label="Main navigation">
-          <div className="nav-section-label">Navigation</div>
-          {NAV_ITEMS.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) => `nav-link${isActive ? " active" : ""}`}
-            >
-              <span className="nav-icon">{item.icon}</span>
-              {item.label}
-            </NavLink>
+        <nav className="sidebar-nav">
+          {NAV_ITEMS.map((section) => (
+            <div key={section.group} className={`nav-group nav-group-${section.color}`}>
+              <span className="nav-section-label">{section.group}</span>
+              {section.items.map((item) => (
+                <NavLink 
+                  key={item.to} 
+                  to={item.to} 
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                >
+                  <span className="nav-icon">{item.icon}</span>
+                  <span className="nav-label">{item.label}</span>
+                  <ChevronRight className="nav-chevron" size={13} />
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
 
@@ -51,31 +110,15 @@ export default function Sidebar() {
           <div className="sidebar-user">
             <div className="sidebar-avatar">{initials}</div>
             <div className="sidebar-user-info">
-              <div className="sidebar-user-name">{profile?.name || "User"}</div>
-              <div className="sidebar-user-level">{profile?.academicLevel || ""}</div>
+              <div className="sidebar-user-name">{profile?.name || "Student"}</div>
+              <div className="sidebar-user-level">{displayLevel}</div>
             </div>
+            <button onClick={handleLogout} className="logout-btn" title="Sign Out">
+              <LogOut size={16} />
+            </button>
           </div>
-          <button className="nav-link btn-danger" onClick={handleLogout} style={{ marginTop: "4px" }}>
-            <span className="nav-icon">🚪</span> Log Out
-          </button>
         </div>
       </aside>
-
-      {/* Mobile Bottom Nav */}
-      <nav className="mobile-nav" aria-label="Mobile navigation">
-        <div className="mobile-nav-inner">
-          {NAV_ITEMS.slice(0, 5).map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={({ isActive }) => `mobile-nav-link${isActive ? " active" : ""}`}
-            >
-              <span className="mobile-nav-icon">{item.icon}</span>
-              {item.label}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
     </>
   );
 }

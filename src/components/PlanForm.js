@@ -1,10 +1,12 @@
-// src/components/PlanForm.js
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Plus, Target, Calendar, Clock, BookOpen, Layers, Tag as TagIcon, Loader, Sparkles } from "lucide-react";
+import TagSelector from "./TagSelector";
 
 const LEVELS = [
-  { value: "beginner", label: "Beginner (School)" },
-  { value: "intermediate", label: "Intermediate (Inter / Pre-university)" },
-  { value: "pro", label: "Advanced (BTech / Degree)" },
+  { value: "beginner", label: "Beginner" },
+  { value: "intermediate", label: "Intermediate" },
+  { value: "pro", label: "Advanced / Pro" },
 ];
 
 const defaultValues = {
@@ -13,6 +15,7 @@ const defaultValues = {
   time_available_days: 30,
   hours_per_day: 3,
   constraints: [],
+  tags: [],
 };
 
 export default function PlanForm({ initialValues = {}, onSubmit, loading = false }) {
@@ -22,11 +25,9 @@ export default function PlanForm({ initialValues = {}, onSubmit, loading = false
 
   function validate() {
     const e = {};
-    if (!form.goal.trim()) e.goal = "Learning goal is required";
-    if (form.goal.trim().length > 500) e.goal = "Goal must be under 500 characters";
-    if (!form.time_available_days || form.time_available_days < 1) e.days = "Must be at least 1 day";
-    if (!form.hours_per_day || form.hours_per_day < 1) e.hours = "Must be at least 1 hour/day";
-    if (form.hours_per_day > 24) e.hours = "Cannot exceed 24 hours/day";
+    if (!form.goal.trim()) e.goal = "What are you trying to learn?";
+    if (!form.time_available_days || form.time_available_days < 1) e.days = "Need at least 1 day";
+    if (!form.hours_per_day || form.hours_per_day < 1) e.hours = "Min 1 hour required";
     return e;
   }
 
@@ -53,95 +54,122 @@ export default function PlanForm({ initialValues = {}, onSubmit, loading = false
       time_available_days: Number(form.time_available_days),
       hours_per_day: Number(form.hours_per_day),
       constraints: form.constraints,
+      tags: form.tags,
     });
   }
 
   return (
     <form className="plan-form" onSubmit={handleSubmit} noValidate>
       <div className="form-group">
-        <label className="form-label" htmlFor="goal">Learning Goal *</label>
-        <input
-          id="goal"
-          type="text"
-          placeholder="e.g. Learn MERN Stack, Crack GATE Exam, Master Python DSA"
-          value={form.goal}
-          onChange={(e) => setForm((f) => ({ ...f, goal: e.target.value }))}
-          maxLength={500}
-          disabled={loading}
-          aria-describedby="goal-error"
-        />
-        {errors.goal && <span id="goal-error" className="form-error">{errors.goal}</span>}
+        <label className="form-label">Learning Objective</label>
+        <div className="input-with-icon">
+          <Target className="input-icon" size={18} />
+          <input
+            type="text"
+            placeholder="e.g. Master React and build a SaaS app"
+            value={form.goal}
+            onChange={(e) => setForm((f) => ({ ...f, goal: e.target.value }))}
+            disabled={loading}
+          />
+        </div>
+        {errors.goal && <span className="form-error">{errors.goal}</span>}
       </div>
 
       <div className="form-group">
-        <label className="form-label" htmlFor="level">Academic Level</label>
-        <select
-          id="level"
-          value={form.level}
-          onChange={(e) => setForm((f) => ({ ...f, level: e.target.value }))}
-          disabled={loading}
-        >
-          {LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
-        </select>
+        <label className="form-label">Knowledge Depth</label>
+        <div className="input-with-icon">
+          <Layers className="input-icon" size={18} />
+          <select value={form.level} onChange={(e) => setForm((f) => ({ ...f, level: e.target.value }))} disabled={loading}>
+            {LEVELS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
+          </select>
+        </div>
       </div>
 
       <div className="form-row">
         <div className="form-group">
-          <label className="form-label" htmlFor="days">Days Available *</label>
-          <input
-            id="days"
-            type="number"
-            min={1} max={365}
-            value={form.time_available_days}
-            onChange={(e) => setForm((f) => ({ ...f, time_available_days: e.target.value }))}
-            disabled={loading}
-          />
+          <label className="form-label">Duration (Days)</label>
+          <div className="input-with-icon">
+            <Calendar className="input-icon" size={18} />
+            <input
+              type="number"
+              value={form.time_available_days}
+              onChange={(e) => setForm((f) => ({ ...f, time_available_days: e.target.value }))}
+              disabled={loading}
+            />
+          </div>
           {errors.days && <span className="form-error">{errors.days}</span>}
         </div>
 
         <div className="form-group">
-          <label className="form-label" htmlFor="hours">Hours / Day *</label>
-          <input
-            id="hours"
-            type="number"
-            min={1} max={24}
-            value={form.hours_per_day}
-            onChange={(e) => setForm((f) => ({ ...f, hours_per_day: e.target.value }))}
-            disabled={loading}
-          />
+          <label className="form-label">Time / Day (Hours)</label>
+          <div className="input-with-icon">
+            <Clock className="input-icon" size={18} />
+            <input
+              type="number"
+              value={form.hours_per_day}
+              onChange={(e) => setForm((f) => ({ ...f, hours_per_day: e.target.value }))}
+              disabled={loading}
+            />
+          </div>
           {errors.hours && <span className="form-error">{errors.hours}</span>}
         </div>
       </div>
 
       <div className="form-group">
-        <label className="form-label">Constraints / Prior Knowledge</label>
-        <div className="constraint-input-row">
+        <label className="form-label">Prior Knowledge / Constraints</label>
+        <div className="input-with-icon" style={{ paddingRight: '8px' }}>
+          <BookOpen className="input-icon" size={18} />
           <input
             type="text"
-            placeholder="e.g. I already know React basics"
+            placeholder="e.g. I already skip basic HTML"
             value={constraintInput}
             onChange={(e) => setConstraintInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addConstraint(); } }}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addConstraint())}
             disabled={loading}
           />
-          <button type="button" className="btn btn-secondary" onClick={addConstraint} disabled={loading}>
-            Add
+          <button type="button" className="btn btn-secondary btn-sm" onClick={addConstraint} disabled={loading} style={{ padding: '0 12px', height: '36px' }}>
+            <Plus size={18} />
           </button>
         </div>
-        <div className="tag-list">
-          {form.constraints.map((c) => (
-            <div key={c} className="tag-item">
-              <span>{c}</span>
-              <button type="button" className="tag-remove" onClick={() => removeConstraint(c)}>×</button>
-            </div>
-          ))}
+        
+        <div className="tag-list" style={{ marginTop: "12px" }}>
+          <AnimatePresence>
+            {form.constraints.map((c) => (
+              <motion.div 
+                key={c} 
+                className="badge badge-indigo"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                style={{ display: 'flex', alignItems: 'center', gap: '6px', borderRadius: '8px' }}
+              >
+                {c}
+                <X size={14} className="cursor-pointer hover:opacity-70" onClick={() => removeConstraint(c)} />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
-        <span className="form-hint">Press Enter or click Add. These help personalize your plan.</span>
       </div>
 
-      <button type="submit" className="btn btn-primary btn-lg" disabled={loading}>
-        {loading ? "⏳ Generating Plan…" : "🚀 Generate My Plan"}
-      </button>
+      <div className="form-group">
+        <label className="form-label">Categorization Tags</label>
+        <div style={{ background: "var(--surface2)", padding: "16px", borderRadius: "16px", border: "1px solid var(--border)" }}>
+          <TagSelector 
+            tags={form.tags} 
+            onChange={(newTags) => setForm(f => ({ ...f, tags: newTags }))} 
+          />
+        </div>
+      </div>
+
+      <motion.button 
+        type="submit" 
+        className="btn btn-primary btn-lg btn-full" 
+        disabled={loading}
+        whileTap={{ scale: 0.98 }}
+      >
+        {loading ? <Loader className="spinner" size={20} /> : <><Sparkles size={18} /> Generate Learning Roadmap</>}
+      </motion.button>
     </form>
   );
 }
+

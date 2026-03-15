@@ -14,6 +14,12 @@ import PlanViewPage from "./pages/PlanViewPage";
 import HistoryPage from "./pages/HistoryPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import ProfilePage from "./pages/ProfilePage";
+import TrackerPage from "./pages/TrackerPage";
+import CalendarPage from "./pages/CalendarPage";
+import TimerPage from "./pages/TimerPage";
+import AchievementsPage from "./pages/AchievementsPage";
+import ActivityPage from "./pages/ActivityPage";
+import PageTransition from "./components/ui/PageTransition";
 
 import "./styles/global.css";
 import "./styles/components.css";
@@ -22,7 +28,7 @@ function AppLayout({ children }) {
   return (
     <div className="page-layout">
       <Sidebar />
-      {children}
+      <PageTransition>{children}</PageTransition>
     </div>
   );
 }
@@ -42,16 +48,23 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             {/* Public */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
+            <Route path="/signup" element={<PageTransition><SignupPage /></PageTransition>} />
 
-            {/* Protected */}
+            {/* Protected — Existing */}
             <Route path="/dashboard" element={<Protected><DashboardPage /></Protected>} />
             <Route path="/planner" element={<Protected><PlannerPage /></Protected>} />
             <Route path="/plan/:planId" element={<Protected><PlanViewPage /></Protected>} />
+            <Route path="/tracker" element={<Protected><TrackerPage /></Protected>} />
             <Route path="/history" element={<Protected><HistoryPage /></Protected>} />
             <Route path="/analytics" element={<Protected><AnalyticsPage /></Protected>} />
             <Route path="/profile" element={<Protected><ProfilePage /></Protected>} />
+
+            {/* Protected — New Features */}
+            <Route path="/calendar" element={<Protected><CalendarPage /></Protected>} />
+            <Route path="/timer" element={<Protected><TimerPage /></Protected>} />
+            <Route path="/achievements" element={<Protected><AchievementsPage /></Protected>} />
+            <Route path="/activity" element={<Protected><ActivityPage /></Protected>} />
 
             {/* Default */}
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
