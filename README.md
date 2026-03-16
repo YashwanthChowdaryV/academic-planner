@@ -1,6 +1,6 @@
-# 🎓 AcadPlan AI — Frontend
+# 🎓 AcadPlan AI
 
-AI-Driven Academic Planning Platform built with **React + Firebase**.
+AI-Driven Academic Planning Platform built with **React + Firebase + Groq LLM**.
 
 ---
 
