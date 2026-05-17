@@ -2,9 +2,18 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getUserPlans, getProgress } from "../services/planService";
-import { getDailyLogs, updateUserStreak } from "../services/extendedService";
-import { BADGES, getEarnedBadges, saveBadges } from "../services/badgeService";
+import {
+  getDailyLogs,
+  updateUserStreak,
+} from "../services/extendedService";
+import {
+  BADGES,
+  getEarnedBadges,
+  saveBadges,
+} from "../services/badgeService";
+
 import Loader from "../components/Loader";
+
 import { motion } from "framer-motion";
 import { Trophy, Star, Lock } from "lucide-react";
 
@@ -145,117 +154,66 @@ export default function AchievementsPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      style={{
-        padding: "1.5rem",
-      }}
     >
-      {/* COMPACT HEADER */}
+      {/* NEW COMPACT TOP LEFT HEADER */}
       <div
         style={{
           marginBottom: "2rem",
           display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
+          alignItems: "center",
           gap: "1rem",
         }}
       >
-        <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "14px",
-              marginBottom: "6px",
-            }}
-          >
-            <div
-              style={{
-                width: "56px",
-                height: "56px",
-                borderRadius: "18px",
-                background:
-                  "linear-gradient(135deg, #f59e0b, #fbbf24)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "white",
-                boxShadow:
-                  "0 12px 24px rgba(245, 158, 11, 0.25)",
-              }}
-            >
-              <Trophy size={26} />
-            </div>
-
-            <div>
-              <h1
-                style={{
-                  margin: 0,
-                  fontSize: "2rem",
-                  fontWeight: 800,
-                  color: "var(--text)",
-                  lineHeight: 1.1,
-                }}
-              >
-                Achievements
-              </h1>
-
-              <p
-                style={{
-                  margin: "4px 0 0",
-                  color: "var(--text-muted)",
-                  fontSize: "0.95rem",
-                }}
-              >
-                Track your learning milestones and unlock
-                badges.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* PROGRESS CARD */}
         <div
           style={{
-            padding: "1rem 1.2rem",
+            width: "58px",
+            height: "58px",
             borderRadius: "18px",
-            background: "var(--surface2)",
-            border: "1px solid var(--border)",
-            minWidth: "190px",
+            background:
+              "linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "white",
+            flexShrink: 0,
+            boxShadow: "0 10px 24px rgba(245, 158, 11, 0.25)",
           }}
         >
-          <div
-            style={{
-              fontSize: "0.72rem",
-              color: "var(--text-dim)",
-              marginBottom: "4px",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: "0.05em",
-            }}
-          >
-            Badge Progress
-          </div>
+          <Trophy size={28} />
+        </div>
 
-          <div
+        <div>
+          <h1
             style={{
-              fontSize: "1.6rem",
+              margin: 0,
+              fontSize: "2rem",
               fontWeight: 800,
-              color: "var(--amber)",
+              color: "var(--text)",
+              lineHeight: 1.1,
             }}
           >
-            {earnedCount}/{totalBadges}
-          </div>
+            Achievements
+          </h1>
+
+          <p
+            style={{
+              margin: "6px 0 0",
+              color: "var(--text-muted)",
+              fontSize: "0.95rem",
+            }}
+          >
+            Earn badges by studying consistently and
+            completing your learning goals.
+          </p>
         </div>
       </div>
 
-      {/* OVERVIEW STATS */}
+      {/* OVERVIEW */}
       <div
         className="stats-grid"
         style={{
           gridTemplateColumns: "repeat(4, 1fr)",
           marginBottom: "2rem",
-          gap: "1rem",
         }}
       >
         {[
@@ -289,16 +247,12 @@ export default function AchievementsPage() {
             className="card stat-card"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.08 }}
-            style={{
-              borderRadius: "18px",
-              padding: "1.4rem",
-            }}
+            transition={{ delay: i * 0.1 }}
           >
             <div
               style={{
-                fontSize: "1.8rem",
-                marginBottom: "6px",
+                fontSize: "1.75rem",
+                marginBottom: "4px",
               }}
             >
               {s.icon}
@@ -308,9 +262,7 @@ export default function AchievementsPage() {
 
             <div
               className="stat-value"
-              style={{
-                color: s.color,
-              }}
+              style={{ color: s.color }}
             >
               {s.value}
             </div>
@@ -318,7 +270,7 @@ export default function AchievementsPage() {
         ))}
       </div>
 
-      {/* BADGE TITLE */}
+      {/* BADGES TITLE */}
       <div
         className="section-title"
         style={{
@@ -332,7 +284,7 @@ export default function AchievementsPage() {
         All Badges
       </div>
 
-      {/* BADGE GRID */}
+      {/* BADGES GRID */}
       <div
         style={{
           display: "grid",
@@ -359,15 +311,14 @@ export default function AchievementsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{
-                delay: i * 0.05,
-                duration: 0.35,
+                delay: i * 0.07,
+                duration: 0.4,
               }}
               style={{
                 padding: "1.5rem",
-                opacity: isEarned ? 1 : 0.72,
+                opacity: isEarned ? 1 : 0.65,
                 position: "relative",
                 overflow: "hidden",
-                borderRadius: "20px",
                 cursor: "default",
               }}
             >
@@ -380,8 +331,9 @@ export default function AchievementsPage() {
                     right: "12px",
                     background: badge.bg,
                     color: badge.color,
-                    borderRadius: "999px",
-                    padding: "4px 10px",
+                    borderRadius:
+                      "var(--radius-full)",
+                    padding: "3px 10px",
                     fontSize: "0.68rem",
                     fontWeight: 700,
                     letterSpacing: "0.04em",
@@ -416,16 +368,16 @@ export default function AchievementsPage() {
               >
                 <div
                   style={{
-                    width: "58px",
-                    height: "58px",
+                    width: "56px",
+                    height: "56px",
                     background: isEarned
                       ? badge.bg
                       : "var(--surface3)",
-                    borderRadius: "18px",
+                    borderRadius: "16px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1.7rem",
+                    fontSize: "1.75rem",
                     filter: isEarned
                       ? "none"
                       : "grayscale(1)",
@@ -438,7 +390,7 @@ export default function AchievementsPage() {
                   <div
                     style={{
                       fontWeight: 700,
-                      fontSize: "0.96rem",
+                      fontSize: "0.95rem",
                       color: "var(--text)",
                       marginBottom: "2px",
                     }}
@@ -458,13 +410,13 @@ export default function AchievementsPage() {
                 </div>
               </div>
 
-              {/* PROGRESS */}
+              {/* PROGRESS BAR */}
               <div>
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    marginBottom: "6px",
+                    marginBottom: "5px",
                   }}
                 >
                   <span
@@ -502,7 +454,7 @@ export default function AchievementsPage() {
                     animate={{ width: `${pct}%` }}
                     transition={{
                       duration: 0.8,
-                      delay: i * 0.05,
+                      delay: i * 0.07,
                       ease: "easeOut",
                     }}
                   />
