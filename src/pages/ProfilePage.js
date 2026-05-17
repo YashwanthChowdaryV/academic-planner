@@ -6,7 +6,18 @@ import { updateUserProfile } from "../services/userService";
 import { useToast } from "../components/Toast";
 import SettingsForm from "../components/SettingsForm";
 import AnimatedCard from "../components/ui/AnimatedCard";
-import { User, Mail, GraduationCap, Save, LogOut, Settings } from "lucide-react";
+import IconBadge from "../components/ui/IconBadge";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  User,
+  Mail,
+  GraduationCap,
+  Save,
+  LogOut,
+  CheckCircle,
+  ShieldCheck,
+  Settings,
+} from "lucide-react";
 
 const LEVELS = [
   { value: "beginner", label: "Beginner" },
@@ -25,6 +36,7 @@ export default function ProfilePage() {
   });
 
   const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const initials = form.name
     ? form.name
@@ -44,6 +56,7 @@ export default function ProfilePage() {
     }
 
     setSaving(true);
+    setSuccess(false);
 
     try {
       await updateUserProfile(user.uid, {
@@ -53,9 +66,12 @@ export default function ProfilePage() {
 
       await refreshProfile();
 
+      setSuccess(true);
       toast.show("Profile updated successfully", "success");
+
+      setTimeout(() => setSuccess(false), 3000);
     } catch {
-      toast.show("Failed to update profile", "error");
+      toast.show("Update failed", "error");
     } finally {
       setSaving(false);
     }
@@ -67,34 +83,50 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="main-content">
-      {/* Header */}
+    <div
+      className="main-content"
+      style={{
+        maxWidth: "1100px",
+        margin: "0 auto",
+        paddingBottom: "3rem",
+      }}
+    >
+      {/* HEADER */}
       <div style={{ marginBottom: "2rem" }}>
         <h1
-          className="page-title"
           style={{
             display: "flex",
             alignItems: "center",
             gap: "10px",
-            color: "#2563eb",
+            fontSize: "2rem",
+            fontWeight: "700",
+            color: "#1e3a8a",
+            marginBottom: "0.4rem",
           }}
         >
           <Settings size={30} />
           Account Settings
         </h1>
 
-        <p className="page-subtitle">
-          Manage your profile and preferences
+        <p
+          style={{
+            color: "#64748b",
+            fontSize: "0.95rem",
+          }}
+        >
+          Manage your profile information and preferences.
         </p>
       </div>
 
-      {/* Profile Card */}
+      {/* PROFILE CARD */}
       <AnimatedCard
+        delay={0}
         style={{
           padding: "2rem",
-          border: "1px solid #dbeafe",
           borderRadius: "20px",
+          border: "1px solid #dbeafe",
           background: "#ffffff",
+          boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
           marginBottom: "2rem",
         }}
       >
@@ -106,6 +138,7 @@ export default function ProfilePage() {
             flexWrap: "wrap",
           }}
         >
+          {/* AVATAR */}
           <div
             style={{
               width: "90px",
@@ -123,34 +156,40 @@ export default function ProfilePage() {
             {initials}
           </div>
 
-          <div>
+          {/* INFO */}
+          <div style={{ flex: 1 }}>
             <h2
               style={{
-                fontSize: "1.8rem",
+                fontSize: "1.6rem",
                 fontWeight: "700",
-                marginBottom: "0.4rem",
+                color: "#0f172a",
+                marginBottom: "0.5rem",
               }}
             >
               {profile?.name || "Student"}
             </h2>
 
-            <span
+            <div
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "8px 14px",
+                borderRadius: "10px",
                 background: "#dbeafe",
-                color: "#2563eb",
-                padding: "6px 14px",
-                borderRadius: "999px",
-                fontSize: "0.9rem",
+                color: "#1d4ed8",
                 fontWeight: "600",
+                fontSize: "0.9rem",
               }}
             >
-              {LEVELS.find((l) => l.value === form.academicLevel)?.label}
-            </span>
+              {
+                LEVELS.find((l) => l.value === form.academicLevel)?.label
+              }
+            </div>
           </div>
         </div>
       </AnimatedCard>
 
-      {/* Main Grid */}
+      {/* GRID */}
       <div
         className="profile-grid"
         style={{
@@ -159,25 +198,31 @@ export default function ProfilePage() {
           gap: "2rem",
         }}
       >
-        {/* Personal Info */}
+        {/* PERSONAL INFO */}
         <AnimatedCard
+          delay={0.1}
           style={{
             padding: "2rem",
-            border: "1px solid #dbeafe",
             borderRadius: "20px",
+            border: "1px solid #dbeafe",
             background: "#ffffff",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
           }}
         >
-          <h2
+          <div
             style={{
-              fontSize: "1.2rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginBottom: "1.8rem",
+              fontSize: "1.1rem",
               fontWeight: "700",
-              marginBottom: "1.5rem",
-              color: "#2563eb",
+              color: "#1e3a8a",
             }}
           >
+            <IconBadge icon={User} size={18} colorClass="primary" />
             Personal Information
-          </h2>
+          </div>
 
           <form
             onSubmit={handleSave}
@@ -187,7 +232,31 @@ export default function ProfilePage() {
               gap: "1.5rem",
             }}
           >
-            {/* Name */}
+            <AnimatePresence>
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "12px 14px",
+                    borderRadius: "10px",
+                    background: "#eff6ff",
+                    color: "#2563eb",
+                    fontWeight: "600",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <CheckCircle size={18} />
+                  Profile updated successfully
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* NAME */}
             <div className="form-group">
               <label className="form-label">Display Name</label>
 
@@ -208,22 +277,44 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Email */}
+            {/* EMAIL */}
             <div className="form-group">
-              <label className="form-label">Email</label>
+              <label className="form-label">Email Address</label>
 
-              <div className="input-with-icon">
+              <div
+                className="input-with-icon"
+                style={{
+                  opacity: 0.8,
+                }}
+              >
                 <Mail className="input-icon" size={18} />
 
                 <input
                   type="email"
                   value={user?.email || ""}
                   readOnly
+                  style={{
+                    cursor: "not-allowed",
+                  }}
                 />
               </div>
+
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  marginTop: "8px",
+                  fontSize: "0.8rem",
+                  color: "#64748b",
+                }}
+              >
+                <ShieldCheck size={14} />
+                Managed securely through Firebase Authentication
+              </span>
             </div>
 
-            {/* Academic Level */}
+            {/* LEVEL */}
             <div className="form-group">
               <label className="form-label">
                 Academic Level
@@ -251,58 +342,67 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Save Button */}
-            <button
+            {/* SAVE BUTTON */}
+            <motion.button
               type="submit"
-              className="btn btn-primary"
               disabled={saving}
+              whileTap={{ scale: 0.98 }}
               style={{
-                width: "100%",
-                height: "48px",
-                background: "#2563eb",
+                height: "50px",
                 border: "none",
                 borderRadius: "12px",
+                background: "#2563eb",
                 color: "white",
                 fontWeight: "600",
                 fontSize: "1rem",
                 cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "10px",
               }}
             >
               {saving ? (
-                "Saving..."
+                "Updating..."
               ) : (
                 <>
-                  <Save size={18} style={{ marginRight: "8px" }} />
+                  <Save size={18} />
                   Update Profile
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
         </AnimatedCard>
 
-        {/* Settings */}
+        {/* SETTINGS */}
         <AnimatedCard
+          delay={0.2}
           style={{
             padding: "2rem",
-            border: "1px solid #dbeafe",
             borderRadius: "20px",
+            border: "1px solid #dbeafe",
             background: "#ffffff",
+            boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
           }}
         >
           <SettingsForm />
         </AnimatedCard>
       </div>
 
-      {/* Sign Out Button */}
-      <div style={{ marginTop: "2.5rem" }}>
+      {/* SIGN OUT */}
+      <div
+        style={{
+          marginTop: "2.5rem",
+        }}
+      >
         <button
           onClick={handleLogout}
           style={{
             width: "100%",
-            height: "56px",
-            background: "#2563eb",
+            height: "58px",
             border: "none",
             borderRadius: "16px",
+            background: "#1e40af",
             color: "white",
             fontSize: "1rem",
             fontWeight: "700",
