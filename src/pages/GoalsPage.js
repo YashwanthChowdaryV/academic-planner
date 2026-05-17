@@ -31,7 +31,8 @@ export default function GoalsPage() {
   const [goals, setGoals] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddModal, setShowAddModal] =
+    useState(false);
 
   const [newGoal, setNewGoal] = useState({
     title: "",
@@ -39,7 +40,8 @@ export default function GoalsPage() {
     targetDate: "",
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] =
+    useState(false);
 
   const [deleteConfirmId, setDeleteConfirmId] =
     useState(null);
@@ -150,7 +152,7 @@ export default function GoalsPage() {
 
   return (
     <div className="main-content">
-      {/* HEADER */}
+      {/* COMPACT HEADER */}
       <div
         style={{
           marginBottom: "2rem",
@@ -196,9 +198,33 @@ export default function GoalsPage() {
             }}
           >
             Set meaningful targets and track your
-            academic journey.
+            academic progress.
           </p>
         </div>
+      </div>
+
+      {/* POSITIVE QUOTE */}
+      <div
+        style={{
+          marginBottom: "2rem",
+          padding: "1rem 1.25rem",
+          borderRadius: "16px",
+          background: "#eff6ff",
+          border: "1px solid #dbeafe",
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            color: "#1e3a8a",
+            fontSize: "0.95rem",
+            fontWeight: 500,
+            lineHeight: 1.6,
+          }}
+        >
+          “Success is built through consistent effort,
+          discipline, and small daily improvements.”
+        </p>
       </div>
 
       {/* ACTION BAR */}
@@ -208,7 +234,7 @@ export default function GoalsPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          marginBottom: "1.8rem",
+          marginBottom: "2rem",
           flexWrap: "wrap",
           gap: "1rem",
         }}
@@ -245,31 +271,7 @@ export default function GoalsPage() {
         </button>
       </div>
 
-      {/* POSITIVE QUOTE */}
-      <div
-        style={{
-          marginBottom: "2rem",
-          padding: "1rem 1.2rem",
-          borderRadius: "16px",
-          background: "#eff6ff",
-          border: "1px solid #dbeafe",
-        }}
-      >
-        <p
-          style={{
-            margin: 0,
-            fontSize: "0.95rem",
-            color: "#1e3a8a",
-            fontWeight: 500,
-            lineHeight: 1.6,
-          }}
-        >
-          “Small consistent progress every day leads
-          to extraordinary results over time.”
-        </p>
-      </div>
-
-      {/* ADD MODAL */}
+      {/* ADD GOAL MODAL */}
       <AnimatePresence>
         {showAddModal && (
           <div
@@ -309,7 +311,7 @@ export default function GoalsPage() {
                   display: "flex",
                   alignItems: "center",
                   gap: "10px",
-                  fontSize: "1.4rem",
+                  fontSize: "1.35rem",
                   fontWeight: 700,
                 }}
               >
@@ -614,7 +616,6 @@ export default function GoalsPage() {
           <h3
             style={{
               marginBottom: "0.5rem",
-              fontSize: "1.3rem",
             }}
           >
             No goals set yet
@@ -629,8 +630,8 @@ export default function GoalsPage() {
               lineHeight: 1.6,
             }}
           >
-            “A goal without a plan is just a wish.
-            Start with one meaningful target today.”
+            “A clear goal is the first step toward
+            meaningful achievement.”
           </p>
 
           <button
