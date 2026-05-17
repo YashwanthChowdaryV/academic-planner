@@ -69,7 +69,7 @@ export default function ProfilePage() {
       setSuccess(true);
       toast.show("Profile updated successfully", "success");
 
-      setTimeout(() => setSuccess(false), 3000);
+      setTimeout(() => setSuccess(false), 2500);
     } catch {
       toast.show("Update failed", "error");
     } finally {
@@ -86,152 +86,148 @@ export default function ProfilePage() {
     <div
       className="main-content"
       style={{
-        maxWidth: "1100px",
-        margin: "0 auto",
-        paddingBottom: "3rem",
+        height: "100vh",
+        overflow: "hidden",
+        padding: "1.5rem",
+        display: "flex",
+        flexDirection: "column",
+        background: "#f8fbff",
       }}
     >
       {/* HEADER */}
-      <div style={{ marginBottom: "2rem" }}>
-        <h1
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            fontSize: "2rem",
-            fontWeight: "700",
-            color: "#1e3a8a",
-            marginBottom: "0.4rem",
-          }}
-        >
-          <Settings size={30} />
-          Account Settings
-        </h1>
-
-        <p
-          style={{
-            color: "#64748b",
-            fontSize: "0.95rem",
-          }}
-        >
-          Manage your profile information and preferences.
-        </p>
-      </div>
-
-      {/* PROFILE CARD */}
-      <AnimatedCard
-        delay={0}
+      <div
         style={{
-          padding: "2rem",
-          borderRadius: "20px",
-          border: "1px solid #dbeafe",
-          background: "#ffffff",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
-          marginBottom: "2rem",
+          marginBottom: "1.2rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "1rem",
         }}
       >
+        <div>
+          <h1
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              fontSize: "1.8rem",
+              fontWeight: "700",
+              color: "#1e3a8a",
+              marginBottom: "4px",
+            }}
+          >
+            <Settings size={28} />
+            Account Settings
+          </h1>
+
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "0.9rem",
+            }}
+          >
+            Manage your profile and preferences
+          </p>
+        </div>
+
+        {/* MINI PROFILE */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "1.5rem",
-            flexWrap: "wrap",
+            gap: "12px",
+            background: "#ffffff",
+            padding: "10px 16px",
+            borderRadius: "16px",
+            border: "1px solid #dbeafe",
+            minWidth: "240px",
           }}
         >
-          {/* AVATAR */}
           <div
             style={{
-              width: "90px",
-              height: "90px",
-              borderRadius: "20px",
+              width: "52px",
+              height: "52px",
+              borderRadius: "14px",
               background: "#2563eb",
               color: "white",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "2rem",
               fontWeight: "700",
+              fontSize: "1.2rem",
             }}
           >
             {initials}
           </div>
 
-          {/* INFO */}
-          <div style={{ flex: 1 }}>
-            <h2
+          <div>
+            <h3
               style={{
-                fontSize: "1.6rem",
+                margin: 0,
+                fontSize: "1rem",
                 fontWeight: "700",
                 color: "#0f172a",
-                marginBottom: "0.5rem",
               }}
             >
               {profile?.name || "Student"}
-            </h2>
+            </h3>
 
-            <div
+            <span
               style={{
-                display: "inline-flex",
-                alignItems: "center",
-                padding: "8px 14px",
-                borderRadius: "10px",
-                background: "#dbeafe",
-                color: "#1d4ed8",
+                fontSize: "0.8rem",
+                color: "#2563eb",
                 fontWeight: "600",
-                fontSize: "0.9rem",
               }}
             >
               {
                 LEVELS.find((l) => l.value === form.academicLevel)?.label
               }
-            </div>
+            </span>
           </div>
         </div>
-      </AnimatedCard>
+      </div>
 
-      {/* GRID */}
+      {/* MAIN GRID */}
       <div
-        className="profile-grid"
         style={{
+          flex: 1,
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "2rem",
+          gridTemplateColumns: "1.1fr 0.9fr",
+          gap: "1.2rem",
+          minHeight: 0,
         }}
       >
-        {/* PERSONAL INFO */}
+        {/* LEFT */}
         <AnimatedCard
-          delay={0.1}
+          delay={0}
           style={{
-            padding: "2rem",
+            padding: "1.5rem",
             borderRadius: "20px",
-            border: "1px solid #dbeafe",
             background: "#ffffff",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+            border: "1px solid #dbeafe",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            overflow: "hidden",
           }}
         >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              marginBottom: "1.8rem",
-              fontSize: "1.1rem",
-              fontWeight: "700",
-              color: "#1e3a8a",
-            }}
-          >
-            <IconBadge icon={User} size={18} colorClass="primary" />
-            Personal Information
-          </div>
+          <div>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "1.5rem",
+                color: "#1e3a8a",
+                fontWeight: "700",
+                fontSize: "1.05rem",
+              }}
+            >
+              <IconBadge icon={User} size={18} colorClass="primary" />
+              Personal Information
+            </div>
 
-          <form
-            onSubmit={handleSave}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1.5rem",
-            }}
-          >
             <AnimatePresence>
               {success && (
                 <motion.div
@@ -242,180 +238,184 @@ export default function ProfilePage() {
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
-                    padding: "12px 14px",
+                    padding: "10px 12px",
                     borderRadius: "10px",
                     background: "#eff6ff",
                     color: "#2563eb",
-                    fontWeight: "600",
                     fontSize: "0.9rem",
+                    fontWeight: "600",
+                    marginBottom: "1rem",
                   }}
                 >
-                  <CheckCircle size={18} />
+                  <CheckCircle size={17} />
                   Profile updated successfully
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* NAME */}
-            <div className="form-group">
-              <label className="form-label">Display Name</label>
-
-              <div className="input-with-icon">
-                <User className="input-icon" size={18} />
-
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      name: e.target.value,
-                    }))
-                  }
-                  disabled={saving}
-                />
-              </div>
-            </div>
-
-            {/* EMAIL */}
-            <div className="form-group">
-              <label className="form-label">Email Address</label>
-
-              <div
-                className="input-with-icon"
-                style={{
-                  opacity: 0.8,
-                }}
-              >
-                <Mail className="input-icon" size={18} />
-
-                <input
-                  type="email"
-                  value={user?.email || ""}
-                  readOnly
-                  style={{
-                    cursor: "not-allowed",
-                  }}
-                />
-              </div>
-
-              <span
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  marginTop: "8px",
-                  fontSize: "0.8rem",
-                  color: "#64748b",
-                }}
-              >
-                <ShieldCheck size={14} />
-                Managed securely through Firebase Authentication
-              </span>
-            </div>
-
-            {/* LEVEL */}
-            <div className="form-group">
-              <label className="form-label">
-                Academic Level
-              </label>
-
-              <div className="input-with-icon">
-                <GraduationCap className="input-icon" size={18} />
-
-                <select
-                  value={form.academicLevel}
-                  onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      academicLevel: e.target.value,
-                    }))
-                  }
-                  disabled={saving}
-                >
-                  {LEVELS.map((l) => (
-                    <option key={l.value} value={l.value}>
-                      {l.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* SAVE BUTTON */}
-            <motion.button
-              type="submit"
-              disabled={saving}
-              whileTap={{ scale: 0.98 }}
+            <form
+              onSubmit={handleSave}
               style={{
-                height: "50px",
-                border: "none",
-                borderRadius: "12px",
-                background: "#2563eb",
-                color: "white",
-                fontWeight: "600",
-                fontSize: "1rem",
-                cursor: "pointer",
                 display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
+                flexDirection: "column",
+                gap: "1.2rem",
               }}
             >
-              {saving ? (
-                "Updating..."
-              ) : (
-                <>
-                  <Save size={18} />
-                  Update Profile
-                </>
-              )}
-            </motion.button>
-          </form>
+              {/* NAME */}
+              <div className="form-group">
+                <label className="form-label">Display Name</label>
+
+                <div className="input-with-icon">
+                  <User className="input-icon" size={18} />
+
+                  <input
+                    type="text"
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        name: e.target.value,
+                      }))
+                    }
+                    disabled={saving}
+                  />
+                </div>
+              </div>
+
+              {/* EMAIL */}
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+
+                <div
+                  className="input-with-icon"
+                  style={{ opacity: 0.8 }}
+                >
+                  <Mail className="input-icon" size={18} />
+
+                  <input
+                    type="email"
+                    value={user?.email || ""}
+                    readOnly
+                    style={{
+                      cursor: "not-allowed",
+                    }}
+                  />
+                </div>
+
+                <span
+                  style={{
+                    marginTop: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    fontSize: "0.78rem",
+                    color: "#64748b",
+                  }}
+                >
+                  <ShieldCheck size={14} />
+                  Managed through Firebase Authentication
+                </span>
+              </div>
+
+              {/* LEVEL */}
+              <div className="form-group">
+                <label className="form-label">
+                  Academic Level
+                </label>
+
+                <div className="input-with-icon">
+                  <GraduationCap className="input-icon" size={18} />
+
+                  <select
+                    value={form.academicLevel}
+                    onChange={(e) =>
+                      setForm((f) => ({
+                        ...f,
+                        academicLevel: e.target.value,
+                      }))
+                    }
+                    disabled={saving}
+                  >
+                    {LEVELS.map((l) => (
+                      <option key={l.value} value={l.value}>
+                        {l.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* SAVE */}
+              <motion.button
+                type="submit"
+                disabled={saving}
+                whileTap={{ scale: 0.98 }}
+                style={{
+                  marginTop: "6px",
+                  height: "48px",
+                  border: "none",
+                  borderRadius: "12px",
+                  background: "#2563eb",
+                  color: "white",
+                  fontWeight: "600",
+                  fontSize: "0.95rem",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                {saving ? (
+                  "Updating..."
+                ) : (
+                  <>
+                    <Save size={18} />
+                    Update Profile
+                  </>
+                )}
+              </motion.button>
+            </form>
+          </div>
+
+          {/* SIGN OUT */}
+          <button
+            onClick={handleLogout}
+            style={{
+              marginTop: "1.5rem",
+              width: "100%",
+              height: "52px",
+              border: "none",
+              borderRadius: "14px",
+              background: "#1e40af",
+              color: "white",
+              fontSize: "0.95rem",
+              fontWeight: "700",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+              cursor: "pointer",
+            }}
+          >
+            <LogOut size={18} />
+            Sign Out
+          </button>
         </AnimatedCard>
 
-        {/* SETTINGS */}
+        {/* RIGHT */}
         <AnimatedCard
-          delay={0.2}
+          delay={0.1}
           style={{
-            padding: "2rem",
+            padding: "1.5rem",
             borderRadius: "20px",
-            border: "1px solid #dbeafe",
             background: "#ffffff",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.04)",
+            border: "1px solid #dbeafe",
+            overflow: "auto",
           }}
         >
           <SettingsForm />
         </AnimatedCard>
-      </div>
-
-      {/* SIGN OUT */}
-      <div
-        style={{
-          marginTop: "2.5rem",
-        }}
-      >
-        <button
-          onClick={handleLogout}
-          style={{
-            width: "100%",
-            height: "58px",
-            border: "none",
-            borderRadius: "16px",
-            background: "#1e40af",
-            color: "white",
-            fontSize: "1rem",
-            fontWeight: "700",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            cursor: "pointer",
-          }}
-        >
-          <LogOut size={20} />
-          Sign Out
-        </button>
       </div>
     </div>
   );
