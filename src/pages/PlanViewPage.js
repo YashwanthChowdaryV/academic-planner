@@ -31,10 +31,8 @@ import {
 import { splitPhases } from "../utils/splitPhases";
 
 import PhaseCard from "../components/PhaseCard";
-import ProgressBar from "../components/ProgressBar";
 import CountdownBar from "../components/CountdownBar";
 import RatingStars from "../components/RatingStars";
-import MilestoneBadge from "../components/MilestoneBadge";
 import Loader from "../components/Loader";
 import IconBadge from "../components/ui/IconBadge";
 import AnimatedCard from "../components/ui/AnimatedCard";
@@ -404,7 +402,7 @@ export default function PlanViewPage() {
       {/* TOP HEADER */}
       <div
         style={{
-          marginBottom: "2rem",
+          marginBottom: "2.5rem",
         }}
       >
         <div
@@ -415,10 +413,9 @@ export default function PlanViewPage() {
             alignItems: "center",
             flexWrap: "wrap",
             gap: "1rem",
-            marginBottom: "1.5rem",
+            marginBottom: "2rem",
           }}
         >
-          {/* LEFT */}
           <div
             style={{
               display: "flex",
@@ -466,6 +463,7 @@ export default function PlanViewPage() {
                     "var(--text-muted)",
                   fontSize:
                     "0.95rem",
+                  fontWeight: 500,
                 }}
               >
                 Learning roadmap
@@ -475,7 +473,6 @@ export default function PlanViewPage() {
             </div>
           </div>
 
-          {/* ACTIONS */}
           <div
             style={{
               display: "flex",
@@ -514,7 +511,7 @@ export default function PlanViewPage() {
           </div>
         </div>
 
-        {/* PROGRESS FIRST */}
+        {/* PROGRESS */}
         <div
           style={{
             display: "grid",
@@ -524,228 +521,94 @@ export default function PlanViewPage() {
             marginBottom: "1.5rem",
           }}
         >
-          <div
-            style={{
-              padding: "1.25rem",
-              borderRadius: "20px",
-              background:
-                "white",
-              border:
-                "1px solid #dbeafe",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems:
-                  "center",
-                gap: "10px",
-                marginBottom:
-                  "0.75rem",
-              }}
-            >
-              <GraduationCap
-                size={18}
-                color="#2563eb"
-              />
-
-              <span
-                style={{
-                  fontSize:
-                    "0.8rem",
-                  fontWeight: 700,
-                  color:
-                    "var(--text-muted)",
-                  textTransform:
-                    "uppercase",
-                }}
-              >
-                Level
-              </span>
-            </div>
-
-            <div
-              style={{
-                fontSize:
-                  "1.15rem",
-                fontWeight: 800,
-                color:
-                  "var(--text)",
-              }}
-            >
-              {
+          {[
+            {
+              icon:
+                GraduationCap,
+              label: "Level",
+              value:
                 plan.input
-                  ?.level
-              }
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "1.25rem",
-              borderRadius: "20px",
-              background:
-                "white",
-              border:
-                "1px solid #dbeafe",
-            }}
-          >
+                  ?.level,
+            },
+            {
+              icon: Calendar,
+              label:
+                "Duration",
+              value: `${plan.input?.time_available_days} Days`,
+            },
+            {
+              icon: Clock,
+              label:
+                "Daily Hours",
+              value: `${plan.input?.hours_per_day}h / day`,
+            },
+            {
+              icon: Zap,
+              label:
+                "Progress",
+              value: `${completionPct}%`,
+            },
+          ].map((item, i) => (
             <div
+              key={i}
               style={{
-                display: "flex",
-                alignItems:
-                  "center",
-                gap: "10px",
-                marginBottom:
-                  "0.75rem",
+                padding:
+                  "1.25rem",
+                borderRadius:
+                  "20px",
+                background:
+                  "white",
+                border:
+                  "1px solid #dbeafe",
               }}
             >
-              <Calendar
-                size={18}
-                color="#2563eb"
-              />
-
-              <span
+              <div
                 style={{
-                  fontSize:
-                    "0.8rem",
-                  fontWeight: 700,
-                  color:
-                    "var(--text-muted)",
-                  textTransform:
-                    "uppercase",
+                  display:
+                    "flex",
+                  alignItems:
+                    "center",
+                  gap: "10px",
+                  marginBottom:
+                    "0.75rem",
                 }}
               >
-                Duration
-              </span>
-            </div>
+                <item.icon
+                  size={18}
+                  color="#2563eb"
+                />
 
-            <div
-              style={{
-                fontSize:
-                  "1.15rem",
-                fontWeight: 800,
-                color:
-                  "var(--text)",
-              }}
-            >
-              {
-                plan.input
-                  ?.time_available_days
-              }{" "}
-              Days
-            </div>
-          </div>
+                <span
+                  style={{
+                    fontSize:
+                      "0.8rem",
+                    fontWeight: 700,
+                    color:
+                      "var(--text-muted)",
+                    textTransform:
+                      "uppercase",
+                  }}
+                >
+                  {item.label}
+                </span>
+              </div>
 
-          <div
-            style={{
-              padding: "1.25rem",
-              borderRadius: "20px",
-              background:
-                "white",
-              border:
-                "1px solid #dbeafe",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems:
-                  "center",
-                gap: "10px",
-                marginBottom:
-                  "0.75rem",
-              }}
-            >
-              <Clock
-                size={18}
-                color="#2563eb"
-              />
-
-              <span
+              <div
                 style={{
                   fontSize:
-                    "0.8rem",
-                  fontWeight: 700,
+                    "1.15rem",
+                  fontWeight: 800,
                   color:
-                    "var(--text-muted)",
-                  textTransform:
-                    "uppercase",
+                    item.label ===
+                    "Progress"
+                      ? "#2563eb"
+                      : "var(--text)",
                 }}
               >
-                Daily Hours
-              </span>
+                {item.value}
+              </div>
             </div>
-
-            <div
-              style={{
-                fontSize:
-                  "1.15rem",
-                fontWeight: 800,
-                color:
-                  "var(--text)",
-              }}
-            >
-              {
-                plan.input
-                  ?.hours_per_day
-              }
-              h / day
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: "1.25rem",
-              borderRadius: "20px",
-              background:
-                "white",
-              border:
-                "1px solid #dbeafe",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems:
-                  "center",
-                gap: "10px",
-                marginBottom:
-                  "0.75rem",
-              }}
-            >
-              <Zap
-                size={18}
-                color="#2563eb"
-              />
-
-              <span
-                style={{
-                  fontSize:
-                    "0.8rem",
-                  fontWeight: 700,
-                  color:
-                    "var(--text-muted)",
-                  textTransform:
-                    "uppercase",
-                }}
-              >
-                Progress
-              </span>
-            </div>
-
-            <div
-              style={{
-                fontSize:
-                  "1.15rem",
-                fontWeight: 800,
-                color:
-                  "#2563eb",
-              }}
-            >
-              {completionPct}%
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* COUNTDOWN */}
@@ -775,8 +638,8 @@ export default function PlanViewPage() {
         style={{
           display: "grid",
           gridTemplateColumns:
-            "1fr 320px",
-          gap: "2rem",
+            "minmax(0, 1fr) 320px",
+          gap: "2.5rem",
           alignItems: "start",
           width: "100%",
         }}
@@ -787,7 +650,7 @@ export default function PlanViewPage() {
             display: "flex",
             flexDirection:
               "column",
-            gap: "1.5rem",
+            gap: "2rem",
           }}
         >
           {phases.length === 0 ? (
@@ -825,7 +688,14 @@ export default function PlanViewPage() {
               </pre>
             </AnimatedCard>
           ) : (
-            <div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection:
+                  "column",
+                gap: "1.75rem",
+              }}
+            >
               {phases.map(
                 (
                   phase,
@@ -950,87 +820,18 @@ export default function PlanViewPage() {
             display: "flex",
             flexDirection:
               "column",
-            gap: "1.5rem",
+            gap: "1.75rem",
             position:
               "sticky",
             top: "100px",
           }}
         >
           <AnimatedCard
-            delay={0.1}
-          >
-            <div className="section-title">
-              <IconBadge
-                icon={Target}
-                size={18}
-                colorClass="primary"
-              />
-
-              Mastery Progress
-            </div>
-
-            <div
-              style={{
-                textAlign:
-                  "center",
-                padding:
-                  "1.5rem 0",
-              }}
-            >
-              <div
-                style={{
-                  fontSize:
-                    "3rem",
-                  fontWeight: 800,
-                  color:
-                    "#2563eb",
-                  letterSpacing:
-                    "-2px",
-                }}
-              >
-                {completionPct}%
-              </div>
-
-              <p className="text-muted text-xs font-bold uppercase tracking-wider">
-                Course
-                Completion
-              </p>
-            </div>
-
-            <ProgressBar
-              completed={
-                completed
-              }
-              total={total}
-              height={10}
-            />
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent:
-                  "space-between",
-                alignItems:
-                  "center",
-                marginTop:
-                  "1.5rem",
-              }}
-            >
-              <span className="text-xs font-bold text-muted">
-                {completed} /{" "}
-                {total} Phases
-              </span>
-
-              <MilestoneBadge
-                percentage={
-                  completionPct
-                }
-              />
-            </div>
-          </AnimatedCard>
-
-          <AnimatedCard
             delay={0.2}
+            style={{
+              borderRadius:
+                "22px",
+            }}
           >
             <div className="section-title">
               <IconBadge
@@ -1061,6 +862,10 @@ export default function PlanViewPage() {
 
           <AnimatedCard
             delay={0.3}
+            style={{
+              borderRadius:
+                "22px",
+            }}
           >
             <div className="section-title">
               <IconBadge
