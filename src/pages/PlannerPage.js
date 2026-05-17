@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 import { generatePlan } from "../services/apiService";
-
 import { createPlan } from "../services/planService";
 
 import { splitPhases } from "../utils/splitPhases";
@@ -16,26 +15,24 @@ import Loader from "../components/Loader";
 import { useToast } from "../components/Toast";
 
 import AnimatedCard from "../components/ui/AnimatedCard";
-import IconBadge from "../components/ui/IconBadge";
 
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
   Sparkles,
   Lightbulb,
-  Zap,
   Rocket,
   BookOpen,
   Clock,
   Target,
-  Flame,
+  TrendingUp,
 } from "lucide-react";
 
 const THINKING_MESSAGES = [
-  "Analyzing your goal with Groq AI…",
-  "Building a structured learning roadmap…",
-  "Optimizing phases and timelines…",
-  "Finalizing your personalized roadmap…",
+  "Understanding your learning goal...",
+  "Preparing a structured roadmap...",
+  "Optimizing timeline and phases...",
+  "Finalizing your personalized plan...",
 ];
 
 export default function PlannerPage() {
@@ -45,37 +42,29 @@ export default function PlannerPage() {
 
   const toast = useToast();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [thinkingMsg, setThinkingMsg] =
     useState(THINKING_MESSAGES[0]);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
-  const [msgIdx, setMsgIdx] =
-    useState(0);
+  const [msgIdx, setMsgIdx] = useState(0);
 
-  async function handleSubmit(
-    payload
-  ) {
+  async function handleSubmit(payload) {
     setError("");
 
     setLoading(true);
 
     setMsgIdx(0);
 
-    setThinkingMsg(
-      THINKING_MESSAGES[0]
-    );
+    setThinkingMsg(THINKING_MESSAGES[0]);
 
     const interval = setInterval(() => {
       setMsgIdx((i) => {
         const next = Math.min(
           i + 1,
-          THINKING_MESSAGES.length -
-            1
+          THINKING_MESSAGES.length - 1
         );
 
         setThinkingMsg(
@@ -84,13 +73,11 @@ export default function PlannerPage() {
 
         return next;
       });
-    }, 6000);
+    }, 5000);
 
     try {
       const planText =
-        await generatePlan(
-          payload
-        );
+        await generatePlan(payload);
 
       clearInterval(interval);
 
@@ -99,7 +86,7 @@ export default function PlannerPage() {
 
       if (phases.length === 0) {
         setError(
-          "AI output format error. Please try a more specific goal."
+          "Unable to generate a proper roadmap. Try giving a more specific goal."
         );
 
         setLoading(false);
@@ -116,7 +103,7 @@ export default function PlannerPage() {
         );
 
       toast.show(
-        "Academic roadmap ready!",
+        "Roadmap generated successfully",
         "success"
       );
 
@@ -126,7 +113,7 @@ export default function PlannerPage() {
 
       setError(
         err.message ||
-          "Plan generation failed. Check your connection."
+          "Plan generation failed. Please try again."
       );
 
       setLoading(false);
@@ -136,20 +123,14 @@ export default function PlannerPage() {
   return (
     <motion.div
       className="main-content"
-      initial={{
-        opacity: 0,
-      }}
-      animate={{
-        opacity: 1,
-      }}
-      transition={{
-        duration: 0.35,
-      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.35 }}
     >
-      {/* TOP HEADER */}
+      {/* HEADER */}
       <div
         style={{
-          marginBottom: "2.5rem",
+          marginBottom: "2.75rem",
         }}
       >
         <div
@@ -162,20 +143,19 @@ export default function PlannerPage() {
         >
           <div
             style={{
-              width: "58px",
-              height: "58px",
-              borderRadius: "18px",
+              width: "56px",
+              height: "56px",
+              borderRadius: "16px",
               background:
-                "linear-gradient(135deg, #ec4899 0%, #f97316 100%)",
+                "linear-gradient(135deg, #f97316 0%, #ec4899 100%)",
               display: "flex",
               alignItems: "center",
-              justifyContent:
-                "center",
+              justifyContent: "center",
               color: "white",
               flexShrink: 0,
             }}
           >
-            <Sparkles size={28} />
+            <Sparkles size={24} />
           </div>
 
           <div>
@@ -184,129 +164,123 @@ export default function PlannerPage() {
                 margin: 0,
                 fontSize: "2rem",
                 fontWeight: 800,
-                color:
-                  "var(--text)",
+                color: "var(--text)",
                 lineHeight: 1.1,
               }}
             >
-              AI Course Planner
+              Course Planner
             </h1>
 
             <p
               style={{
-                margin:
-                  "6px 0 0",
-                color:
-                  "var(--text-muted)",
-                fontSize:
-                  "0.95rem",
+                marginTop: "0.45rem",
+                color: "var(--text-muted)",
+                fontSize: "0.95rem",
                 fontWeight: 500,
+                lineHeight: 1.6,
               }}
             >
-              Transform your
-              learning goals into
-              structured roadmaps
-              with intelligent AI
-              guidance.
+              Build structured learning roadmaps
+              based on your goals, schedule, and
+              current skill level.
             </p>
           </div>
         </div>
       </div>
 
-      {/* MAIN GRID */}
+      {/* MAIN CONTENT */}
       <div
-        className="planner-grid"
         style={{
           display: "grid",
           gridTemplateColumns:
-            "minmax(0,1fr) 360px",
+            "minmax(0, 1fr) 360px",
           gap: "2.5rem",
           alignItems: "start",
-          width: "100%",
         }}
       >
         {/* LEFT */}
         <div
           style={{
             display: "flex",
-            flexDirection:
-              "column",
+            flexDirection: "column",
             gap: "2rem",
           }}
         >
           <AnimatePresence mode="wait">
             {loading ? (
               <AnimatedCard
-                delay={0.1}
                 key="loading"
+                delay={0.1}
                 style={{
                   padding:
-                    "5rem 2rem",
-                  textAlign:
-                    "center",
-                  borderRadius:
-                    "24px",
+                    "5rem 2.5rem",
+                  textAlign: "center",
+                  borderRadius: "24px",
                 }}
               >
-                <Loader
-                  text={thinkingMsg}
-                />
+                <Loader text={thinkingMsg} />
 
                 <p
-                  className="text-muted text-sm"
                   style={{
-                    marginTop:
-                      "2rem",
+                    marginTop: "2rem",
+                    color:
+                      "var(--text-muted)",
+                    fontSize: "0.95rem",
                     lineHeight: 1.8,
                   }}
                 >
-                  Creating the
-                  most efficient
-                  and realistic
-                  learning roadmap
-                  for your goal.
+                  Generating a practical and
+                  realistic roadmap for your
+                  learning journey.
                 </p>
               </AnimatedCard>
             ) : (
               <AnimatedCard
-                delay={0.1}
                 key="form"
+                delay={0.1}
                 style={{
                   padding:
-                    "2.5rem",
-                  borderRadius:
-                    "24px",
+                    "2.75rem",
+                  borderRadius: "24px",
                 }}
               >
+                {/* FORM HEADER */}
                 <div
                   style={{
                     marginBottom:
-                      "2rem",
+                      "2.25rem",
                   }}
                 >
                   <h2
                     style={{
                       fontSize:
-                        "1.5rem",
+                        "1.45rem",
                       fontWeight: 800,
                       marginBottom:
-                        "0.5rem",
+                        "0.6rem",
+                      color:
+                        "var(--text)",
                     }}
                   >
-                    Create Your
-                    Roadmap
+                    Generate Your Plan
                   </h2>
 
-                  <p className="text-muted text-sm">
-                    Define your
-                    objective and
-                    let AI design
-                    the learning
-                    structure for
-                    you.
+                  <p
+                    style={{
+                      color:
+                        "var(--text-muted)",
+                      fontSize:
+                        "0.95rem",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    Enter your learning target
+                    and preferred study pace to
+                    create a personalized roadmap.
                   </p>
                 </div>
 
+                {/* ERROR */}
                 {error && (
                   <motion.div
                     initial={{
@@ -317,57 +291,72 @@ export default function PlannerPage() {
                       opacity: 1,
                       y: 0,
                     }}
-                    className="alert alert-error"
                     style={{
+                      padding:
+                        "1rem 1.1rem",
+                      borderRadius:
+                        "14px",
+                      background:
+                        "rgba(239,68,68,0.08)",
+                      border:
+                        "1px solid rgba(239,68,68,0.15)",
+                      color:
+                        "#ef4444",
+                      fontSize:
+                        "0.92rem",
+                      fontWeight: 600,
                       marginBottom:
                         "2rem",
                     }}
                   >
-                    <Zap
-                      size={18}
-                    />{" "}
                     {error}
                   </motion.div>
                 )}
 
-                <PlanForm
-                  onSubmit={
-                    handleSubmit
-                  }
-                  loading={
-                    loading
-                  }
-                />
+                {/* PLAN FORM */}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection:
+                      "column",
+                    gap: "1.5rem",
+                  }}
+                >
+                  <PlanForm
+                    onSubmit={
+                      handleSubmit
+                    }
+                    loading={loading}
+                  />
+                </div>
               </AnimatedCard>
             )}
           </AnimatePresence>
         </div>
 
-        {/* RIGHT */}
+        {/* RIGHT SIDE */}
         <div
           style={{
             display: "flex",
-            flexDirection:
-              "column",
+            flexDirection: "column",
             gap: "2rem",
           }}
         >
-          {/* POSITIVE CARD */}
+          {/* QUOTE CARD */}
           <AnimatedCard
             delay={0.2}
             style={{
-              borderRadius:
-                "24px",
+              borderRadius: "24px",
+              padding: "2rem",
               background:
-                "linear-gradient(135deg, rgba(236,72,153,0.06) 0%, rgba(249,115,22,0.06) 100%)",
+                "linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(236,72,153,0.06) 100%)",
               border:
-                "1px solid rgba(236,72,153,0.12)",
+                "1px solid rgba(249,115,22,0.12)",
             }}
           >
             <div
               style={{
-                display:
-                  "flex",
+                display: "flex",
                 alignItems:
                   "flex-start",
                 gap: "1rem",
@@ -375,273 +364,262 @@ export default function PlannerPage() {
             >
               <div
                 style={{
-                  width: "54px",
-                  height: "54px",
-                  borderRadius:
-                    "16px",
+                  width: "52px",
+                  height: "52px",
+                  borderRadius: "14px",
                   background:
-                    "linear-gradient(135deg, #ec4899 0%, #f97316 100%)",
-                  display:
-                    "flex",
-                  alignItems:
-                    "center",
+                    "linear-gradient(135deg, #f97316 0%, #ec4899 100%)",
+                  display: "flex",
+                  alignItems: "center",
                   justifyContent:
                     "center",
-                  color:
-                    "white",
+                  color: "white",
                   flexShrink: 0,
                 }}
               >
-                <Flame
-                  size={26}
-                />
+                <TrendingUp size={22} />
               </div>
 
               <div>
                 <h3
                   style={{
                     fontSize:
-                      "1.15rem",
-                    fontWeight: 800,
+                      "1.05rem",
+                    fontWeight: 700,
                     marginBottom:
-                      "0.75rem",
+                      "0.7rem",
+                    color:
+                      "var(--text)",
                   }}
                 >
-                  Every Expert Was
-                  Once a Beginner
+                  Consistency builds mastery
                 </h3>
 
                 <p
-                  className="text-muted text-sm"
                   style={{
+                    color:
+                      "var(--text-muted)",
+                    fontSize:
+                      "0.92rem",
                     lineHeight: 1.8,
                   }}
                 >
-                  Consistent
-                  learning and
-                  structured
-                  planning create
-                  long-term growth.
-                  Small daily
-                  progress compounds
-                  into massive
-                  achievement over
-                  time.
+                  Focus on steady progress,
+                  realistic goals, and daily
+                  discipline. Small efforts done
+                  consistently create long-term
+                  growth.
                 </p>
               </div>
             </div>
           </AnimatedCard>
 
-          {/* PRO TIPS */}
+          {/* TIPS */}
           <AnimatedCard
             delay={0.3}
             style={{
-              borderRadius:
-                "24px",
-              border:
-                "1px solid rgba(249,115,22,0.12)",
+              borderRadius: "24px",
+              padding: "2rem",
             }}
           >
-            <div className="section-title">
-              <IconBadge
-                icon={
-                  Lightbulb
-                }
-                size={18}
-                colorClass="amber"
-              />
-
-              Smart Planning Tips
-            </div>
+            <h3
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: 700,
+                marginBottom: "1.8rem",
+                color: "var(--text)",
+              }}
+            >
+              Planning Tips
+            </h3>
 
             <div
               style={{
-                display:
-                  "flex",
-                flexDirection:
-                  "column",
-                gap: "1.5rem",
-                marginTop:
-                  "1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.75rem",
               }}
             >
               <div
                 style={{
-                  display:
-                    "flex",
+                  display: "flex",
                   gap: "14px",
                   alignItems:
                     "flex-start",
                 }}
               >
-                <div
+                <Rocket
+                  size={18}
+                  color="#f97316"
                   style={{
-                    color:
-                      "#ec4899",
-                    marginTop:
-                      "2px",
+                    marginTop: "3px",
+                    flexShrink: 0,
                   }}
-                >
-                  <Rocket
-                    size={18}
-                  />
-                </div>
+                />
 
                 <div>
                   <h4
                     style={{
-                      fontWeight: 700,
                       fontSize:
                         "0.95rem",
+                      fontWeight: 700,
                       marginBottom:
-                        "0.3rem",
+                        "0.35rem",
                     }}
                   >
-                    Be Specific
+                    Be specific with goals
                   </h4>
 
-                  <p className="text-muted text-sm">
-                    Clear goals help
-                    the AI generate
-                    more accurate
-                    and useful
-                    roadmaps.
+                  <p
+                    style={{
+                      color:
+                        "var(--text-muted)",
+                      fontSize:
+                        "0.88rem",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    Detailed goals help generate
+                    better and more accurate
+                    learning plans.
                   </p>
                 </div>
               </div>
 
               <div
                 style={{
-                  display:
-                    "flex",
+                  display: "flex",
                   gap: "14px",
                   alignItems:
                     "flex-start",
                 }}
               >
-                <div
+                <BookOpen
+                  size={18}
+                  color="#ec4899"
                   style={{
-                    color:
-                      "#f97316",
-                    marginTop:
-                      "2px",
+                    marginTop: "3px",
+                    flexShrink: 0,
                   }}
-                >
-                  <BookOpen
-                    size={18}
-                  />
-                </div>
+                />
 
                 <div>
                   <h4
                     style={{
-                      fontWeight: 700,
                       fontSize:
                         "0.95rem",
+                      fontWeight: 700,
                       marginBottom:
-                        "0.3rem",
+                        "0.35rem",
                     }}
                   >
-                    Mention Your
-                    Background
+                    Mention your background
                   </h4>
 
-                  <p className="text-muted text-sm">
-                    Include your
-                    current skill
-                    level to avoid
-                    unnecessary
-                    basics.
+                  <p
+                    style={{
+                      color:
+                        "var(--text-muted)",
+                      fontSize:
+                        "0.88rem",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    Adding your current skill
+                    level helps avoid unnecessary
+                    beginner content.
                   </p>
                 </div>
               </div>
 
               <div
                 style={{
-                  display:
-                    "flex",
+                  display: "flex",
                   gap: "14px",
                   alignItems:
                     "flex-start",
                 }}
               >
-                <div
+                <Clock
+                  size={18}
+                  color="#f97316"
                   style={{
-                    color:
-                      "#ec4899",
-                    marginTop:
-                      "2px",
+                    marginTop: "3px",
+                    flexShrink: 0,
                   }}
-                >
-                  <Clock
-                    size={18}
-                  />
-                </div>
+                />
 
                 <div>
                   <h4
                     style={{
-                      fontWeight: 700,
                       fontSize:
                         "0.95rem",
+                      fontWeight: 700,
                       marginBottom:
-                        "0.3rem",
+                        "0.35rem",
                     }}
                   >
-                    Stay Realistic
+                    Keep study hours realistic
                   </h4>
 
-                  <p className="text-muted text-sm">
-                    Sustainable daily
-                    study hours lead
-                    to better
-                    long-term
-                    consistency.
+                  <p
+                    style={{
+                      color:
+                        "var(--text-muted)",
+                      fontSize:
+                        "0.88rem",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    Sustainable schedules improve
+                    completion rates and reduce
+                    burnout.
                   </p>
                 </div>
               </div>
 
               <div
                 style={{
-                  display:
-                    "flex",
+                  display: "flex",
                   gap: "14px",
                   alignItems:
                     "flex-start",
                 }}
               >
-                <div
+                <Target
+                  size={18}
+                  color="#ec4899"
                   style={{
-                    color:
-                      "#f97316",
-                    marginTop:
-                      "2px",
+                    marginTop: "3px",
+                    flexShrink: 0,
                   }}
-                >
-                  <Target
-                    size={18}
-                  />
-                </div>
+                />
 
                 <div>
                   <h4
                     style={{
-                      fontWeight: 700,
                       fontSize:
                         "0.95rem",
+                      fontWeight: 700,
                       marginBottom:
-                        "0.3rem",
+                        "0.35rem",
                     }}
                   >
-                    Focus on One
-                    Goal
+                    Focus on one roadmap
                   </h4>
 
-                  <p className="text-muted text-sm">
-                    Single focused
-                    roadmaps improve
-                    completion and
-                    learning quality.
+                  <p
+                    style={{
+                      color:
+                        "var(--text-muted)",
+                      fontSize:
+                        "0.88rem",
+                      lineHeight: 1.7,
+                    }}
+                  >
+                    Concentrating on one major
+                    goal improves learning
+                    efficiency and consistency.
                   </p>
                 </div>
               </div>
