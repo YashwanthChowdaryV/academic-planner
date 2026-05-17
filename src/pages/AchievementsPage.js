@@ -5,23 +5,45 @@ import { getUserPlans, getProgress } from "../services/planService";
 import { getDailyLogs, updateUserStreak } from "../services/extendedService";
 import { BADGES, getEarnedBadges, saveBadges } from "../services/badgeService";
 import Loader from "../components/Loader";
-import HeroBanner from "../components/ui/HeroBanner";
 import { motion } from "framer-motion";
 import { Trophy, Star, Lock } from "lucide-react";
 
-function ProgressRing({ pct, size = 64, stroke = 5, color = "var(--primary)" }) {
+function ProgressRing({
+  pct,
+  size = 64,
+  stroke = 5,
+  color = "var(--primary)",
+}) {
   const r = (size - stroke * 2) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - (pct / 100) * circ;
+
   return (
     <svg width={size} height={size}>
-      <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--surface3)" strokeWidth={stroke} />
       <circle
-        cx={size/2} cy={size/2} r={r} fill="none"
-        stroke={color} strokeWidth={stroke}
-        strokeDasharray={circ} strokeDashoffset={offset}
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke="var(--surface3)"
+        strokeWidth={stroke}
+      />
+
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        stroke={color}
+        strokeWidth={stroke}
+        strokeDasharray={circ}
+        strokeDashoffset={offset}
         strokeLinecap="round"
-        style={{ transform: "rotate(-90deg)", transformOrigin: "center", transition: "stroke-dashoffset 0.8s ease" }}
+        style={{
+          transform: "rotate(-90deg)",
+          transformOrigin: "center",
+          transition: "stroke-dashoffset 0.8s ease",
+        }}
       />
     </svg>
   );
@@ -29,30 +51,51 @@ function ProgressRing({ pct, size = 64, stroke = 5, color = "var(--primary)" }) 
 
 export default function AchievementsPage() {
   const { user } = useAuth();
+
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({ streak: 0, totalPlans: 0, completedPlans: 0, totalHours: 0 });
+
+  const [stats, setStats] = useState({
+    streak: 0,
+    totalPlans: 0,
+    completedPlans: 0,
+    totalHours: 0,
+  });
+
   const [earned, setEarned] = useState([]);
 
   useEffect(() => {
     async function load() {
       try {
-        const [plans, logs, streakData, earnedIds] = await Promise.all([
-          getUserPlans(user.uid, 100),
-          getDailyLogs(user.uid),
-          updateUserStreak(user.uid),
-          getEarnedBadges(user.uid),
-        ]);
+        const [plans, logs, streakData, earnedIds] =
+          await Promise.all([
+            getUserPlans(user.uid, 100),
+            getDailyLogs(user.uid),
+            updateUserStreak(user.uid),
+            getEarnedBadges(user.uid),
+          ]);
 
-        const totalHours = Object.values(logs).reduce((a, b) => a + b, 0);
+        const totalHours = Object.values(logs).reduce(
+          (a, b) => a + b,
+          0
+        );
 
         let completedPlans = 0;
-        await Promise.all(plans.map(async (p) => {
-          const prog = await getProgress(user.uid, p.id);
-          const phases = prog?.phases || {};
-          const count = p.meta?.phaseCount || 0;
-          const done = Object.values(phases).filter(Boolean).length;
-          if (count > 0 && done === count) completedPlans++;
-        }));
+
+        await Promise.all(
+          plans.map(async (p) => {
+            const prog = await getProgress(user.uid, p.id);
+
+            const phases = prog?.phases || {};
+            const count = p.meta?.phaseCount || 0;
+
+            const done = Object.values(phases).filter(Boolean)
+              .length;
+
+            if (count > 0 && done === count) {
+              completedPlans++;
+            }
+          })
+        );
 
         const computedStats = {
           streak: streakData.streak || 0,
@@ -63,66 +106,251 @@ export default function AchievementsPage() {
 
         setStats(computedStats);
 
-        // Auto-award new badges
-        const newlyEarned = BADGES.filter(b => b.check(computedStats)).map(b => b.id);
-        const merged = [...new Set([...earnedIds, ...newlyEarned])];
+        // Auto-award badges
+        const newlyEarned = BADGES.filter((b) =>
+          b.check(computedStats)
+        ).map((b) => b.id);
+
+        const merged = [
+          ...new Set([...earnedIds, ...newlyEarned]),
+        ];
+
         if (merged.length > earnedIds.length) {
           await saveBadges(user.uid, merged);
         }
+
         setEarned(merged);
       } finally {
         setLoading(false);
       }
     }
+
     load();
   }, [user.uid]);
 
-  if (loading) return <div className="main-content"><Loader text="Checking your achievements…" /></div>;
+  if (loading) {
+    return (
+      <div className="main-content">
+        <Loader text="Checking your achievements…" />
+      </div>
+    );
+  }
 
   const earnedCount = earned.length;
   const totalBadges = BADGES.length;
 
   return (
-    <motion.div className="main-content" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-      <HeroBanner
-        title="Achievements"
-        subtitle="Earn badges by studying consistently and completing your learning goals."
-        icon={Trophy}
-        colorClass="amber"
-      />
+    <motion.div
+      className="main-content"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      style={{
+        padding: "1.5rem",
+      }}
+    >
+      {/* COMPACT HEADER */}
+      <div
+        style={{
+          marginBottom: "2rem",
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "1rem",
+        }}
+      >
+        <div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "14px",
+              marginBottom: "6px",
+            }}
+          >
+            <div
+              style={{
+                width: "56px",
+                height: "56px",
+                borderRadius: "18px",
+                background:
+                  "linear-gradient(135deg, #f59e0b, #fbbf24)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "white",
+                boxShadow:
+                  "0 12px 24px rgba(245, 158, 11, 0.25)",
+              }}
+            >
+              <Trophy size={26} />
+            </div>
 
-      {/* Overview */}
-      <div className="stats-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: "2rem" }}>
+            <div>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: "2rem",
+                  fontWeight: 800,
+                  color: "var(--text)",
+                  lineHeight: 1.1,
+                }}
+              >
+                Achievements
+              </h1>
+
+              <p
+                style={{
+                  margin: "4px 0 0",
+                  color: "var(--text-muted)",
+                  fontSize: "0.95rem",
+                }}
+              >
+                Track your learning milestones and unlock
+                badges.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* PROGRESS CARD */}
+        <div
+          style={{
+            padding: "1rem 1.2rem",
+            borderRadius: "18px",
+            background: "var(--surface2)",
+            border: "1px solid var(--border)",
+            minWidth: "190px",
+          }}
+        >
+          <div
+            style={{
+              fontSize: "0.72rem",
+              color: "var(--text-dim)",
+              marginBottom: "4px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.05em",
+            }}
+          >
+            Badge Progress
+          </div>
+
+          <div
+            style={{
+              fontSize: "1.6rem",
+              fontWeight: 800,
+              color: "var(--amber)",
+            }}
+          >
+            {earnedCount}/{totalBadges}
+          </div>
+        </div>
+      </div>
+
+      {/* OVERVIEW STATS */}
+      <div
+        className="stats-grid"
+        style={{
+          gridTemplateColumns: "repeat(4, 1fr)",
+          marginBottom: "2rem",
+          gap: "1rem",
+        }}
+      >
         {[
-          { label: "Badges Earned", value: `${earnedCount}/${totalBadges}`, icon: "🏅", color: "var(--amber)" },
-          { label: "Day Streak", value: stats.streak, icon: "🔥", color: "var(--red)" },
-          { label: "Total Plans", value: stats.totalPlans, icon: "📚", color: "var(--primary)" },
-          { label: "Hours Logged", value: `${stats.totalHours}h`, icon: "⏱️", color: "var(--accent)" },
+          {
+            label: "Badges Earned",
+            value: `${earnedCount}/${totalBadges}`,
+            icon: "🏅",
+            color: "var(--amber)",
+          },
+          {
+            label: "Day Streak",
+            value: stats.streak,
+            icon: "🔥",
+            color: "var(--red)",
+          },
+          {
+            label: "Total Plans",
+            value: stats.totalPlans,
+            icon: "📚",
+            color: "var(--primary)",
+          },
+          {
+            label: "Hours Logged",
+            value: `${stats.totalHours}h`,
+            icon: "⏱️",
+            color: "var(--accent)",
+          },
         ].map((s, i) => (
           <motion.div
             key={s.label}
             className="card stat-card"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
+            transition={{ delay: i * 0.08 }}
+            style={{
+              borderRadius: "18px",
+              padding: "1.4rem",
+            }}
           >
-            <div style={{ fontSize: "1.75rem", marginBottom: "4px" }}>{s.icon}</div>
+            <div
+              style={{
+                fontSize: "1.8rem",
+                marginBottom: "6px",
+              }}
+            >
+              {s.icon}
+            </div>
+
             <div className="stat-label">{s.label}</div>
-            <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
+
+            <div
+              className="stat-value"
+              style={{
+                color: s.color,
+              }}
+            >
+              {s.value}
+            </div>
           </motion.div>
         ))}
       </div>
 
-      {/* Badge Grid */}
-      <div className="section-title" style={{ marginBottom: "1rem" }}>
-        <Star size={18} /> All Badges
+      {/* BADGE TITLE */}
+      <div
+        className="section-title"
+        style={{
+          marginBottom: "1rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <Star size={18} />
+        All Badges
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.25rem" }}>
+      {/* BADGE GRID */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fill, minmax(240px, 1fr))",
+          gap: "1.25rem",
+        }}
+      >
         {BADGES.map((badge, i) => {
           const isEarned = earned.includes(badge.id);
-          const progressVal = stats[badge.progressKey] || 0;
-          const pct = Math.min(Math.round((progressVal / badge.goal) * 100), 100);
+
+          const progressVal =
+            stats[badge.progressKey] || 0;
+
+          const pct = Math.min(
+            Math.round((progressVal / badge.goal) * 100),
+            100
+          );
 
           return (
             <motion.div
@@ -130,70 +358,153 @@ export default function AchievementsPage() {
               className="card"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.07, duration: 0.4 }}
+              transition={{
+                delay: i * 0.05,
+                duration: 0.35,
+              }}
               style={{
                 padding: "1.5rem",
-                opacity: isEarned ? 1 : 0.65,
+                opacity: isEarned ? 1 : 0.72,
                 position: "relative",
                 overflow: "hidden",
+                borderRadius: "20px",
                 cursor: "default",
               }}
             >
+              {/* EARNED */}
               {isEarned && (
-                <div style={{
-                  position: "absolute", top: "12px", right: "12px",
-                  background: badge.bg, color: badge.color,
-                  borderRadius: "var(--radius-full)", padding: "3px 10px",
-                  fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.04em"
-                }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "12px",
+                    right: "12px",
+                    background: badge.bg,
+                    color: badge.color,
+                    borderRadius: "999px",
+                    padding: "4px 10px",
+                    fontSize: "0.68rem",
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                  }}
+                >
                   EARNED
                 </div>
               )}
+
+              {/* LOCK */}
               {!isEarned && (
-                <div style={{
-                  position: "absolute", top: "12px", right: "12px",
-                  color: "var(--text-dim)"
-                }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "12px",
+                    right: "12px",
+                    color: "var(--text-dim)",
+                  }}
+                >
                   <Lock size={14} />
                 </div>
               )}
 
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
-                <div style={{
-                  width: "56px", height: "56px",
-                  background: isEarned ? badge.bg : "var(--surface3)",
-                  borderRadius: "16px",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: "1.75rem",
-                  filter: isEarned ? "none" : "grayscale(1)"
-                }}>
+              {/* BADGE CONTENT */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1rem",
+                }}
+              >
+                <div
+                  style={{
+                    width: "58px",
+                    height: "58px",
+                    background: isEarned
+                      ? badge.bg
+                      : "var(--surface3)",
+                    borderRadius: "18px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.7rem",
+                    filter: isEarned
+                      ? "none"
+                      : "grayscale(1)",
+                  }}
+                >
                   {badge.icon}
                 </div>
+
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: "0.95rem", color: "var(--text)", marginBottom: "2px" }}>
+                  <div
+                    style={{
+                      fontWeight: 700,
+                      fontSize: "0.96rem",
+                      color: "var(--text)",
+                      marginBottom: "2px",
+                    }}
+                  >
                     {badge.title}
                   </div>
-                  <div style={{ fontSize: "0.78rem", color: "var(--text-muted)", lineHeight: 1.4 }}>
+
+                  <div
+                    style={{
+                      fontSize: "0.78rem",
+                      color: "var(--text-muted)",
+                      lineHeight: 1.4,
+                    }}
+                  >
                     {badge.description}
                   </div>
                 </div>
               </div>
 
-              {/* Progress bar */}
+              {/* PROGRESS */}
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
-                  <span style={{ fontSize: "0.72rem", color: "var(--text-dim)", fontWeight: 500 }}>Progress</span>
-                  <span style={{ fontSize: "0.72rem", color: badge.color, fontWeight: 700 }}>
-                    {isEarned ? "Complete!" : `${progressVal} / ${badge.goal}`}
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "6px",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "0.72rem",
+                      color: "var(--text-dim)",
+                      fontWeight: 500,
+                    }}
+                  >
+                    Progress
+                  </span>
+
+                  <span
+                    style={{
+                      fontSize: "0.72rem",
+                      color: badge.color,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {isEarned
+                      ? "Complete!"
+                      : `${progressVal} / ${badge.goal}`}
                   </span>
                 </div>
+
                 <div className="progress-track">
                   <motion.div
                     className="progress-fill"
-                    style={{ background: isEarned ? badge.color : "var(--surface3)" }}
+                    style={{
+                      background: isEarned
+                        ? badge.color
+                        : "var(--surface3)",
+                    }}
                     initial={{ width: "0%" }}
                     animate={{ width: `${pct}%` }}
-                    transition={{ duration: 0.8, delay: i * 0.07, ease: "easeOut" }}
+                    transition={{
+                      duration: 0.8,
+                      delay: i * 0.05,
+                      ease: "easeOut",
+                    }}
                   />
                 </div>
               </div>
