@@ -22,7 +22,6 @@ import {
 const NAV_ITEMS = [
   {
     group: "Overview",
-    color: "green",
     items: [
       {
         to: "/dashboard",
@@ -39,7 +38,6 @@ const NAV_ITEMS = [
 
   {
     group: "Planning",
-    color: "orange",
     items: [
       {
         to: "/planner",
@@ -71,7 +69,6 @@ const NAV_ITEMS = [
 
   {
     group: "Progress",
-    color: "red",
     items: [
       {
         to: "/achievements",
@@ -83,7 +80,6 @@ const NAV_ITEMS = [
 
   {
     group: "Account",
-    color: "muted",
     items: [
       {
         to: "/profile",
@@ -107,21 +103,23 @@ const LEVEL_LABELS = {
 };
 
 export default function Sidebar() {
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout } =
+    useAuth();
 
   const navigate = useNavigate();
 
-  const [showOnboarding, setShowOnboarding] =
-    useState(false);
+  const [
+    showOnboarding,
+    setShowOnboarding,
+  ] = useState(false);
 
   useEffect(() => {
     if (!user?.uid) return;
 
     getSettings(user.uid)
       .then((s) => {
-        if (!s.onboarded) {
+        if (!s.onboarded)
           setShowOnboarding(true);
-        }
       })
       .catch(() => {});
   }, [user?.uid]);
@@ -141,7 +139,9 @@ export default function Sidebar() {
     : "??";
 
   const displayLevel =
-    LEVEL_LABELS[profile?.academicLevel] ||
+    LEVEL_LABELS[
+      profile?.academicLevel
+    ] ||
     profile?.academicLevel ||
     "Beginner";
 
@@ -164,16 +164,18 @@ export default function Sidebar() {
             style={{
               background: "transparent",
               boxShadow: "none",
-              width: "52px",
-              height: "52px",
-              borderRadius: "14px",
+              width: "48px",
+              height: "48px",
+              borderRadius: "12px",
               overflow: "hidden",
-              padding: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <img
               src="https://www.projectsmart.co.uk/img/plan.png"
-              alt="AcadPlan AI"
+              alt="AcadAI"
               style={{
                 width: "100%",
                 height: "100%",
@@ -185,8 +187,10 @@ export default function Sidebar() {
           <div>
             <h2
               style={{
-                color: "#dc2626",
+                margin: 0,
+                fontSize: "1.15rem",
                 fontWeight: 800,
+                color: "var(--text)",
               }}
             >
               AcadPlan AI
@@ -194,7 +198,11 @@ export default function Sidebar() {
 
             <p
               style={{
-                color: "var(--text-muted)",
+                margin: 0,
+                marginTop: "2px",
+                fontSize: "0.78rem",
+                color:
+                  "var(--text-muted)",
                 fontWeight: 500,
               }}
             >
@@ -205,91 +213,55 @@ export default function Sidebar() {
 
         {/* NAVIGATION */}
         <nav className="sidebar-nav">
-          {NAV_ITEMS.map((section) => (
-            <div
-              key={section.group}
-              className={`nav-group nav-group-${section.color}`}
-            >
-              <span
-                className="nav-section-label"
-                style={{
-                  color:
-                    section.color ===
-                    "green"
-                      ? "#16a34a"
-                      : section.color ===
-                        "orange"
-                      ? "#ea580c"
-                      : section.color ===
-                        "red"
-                      ? "#dc2626"
-                      : "var(--text-muted)",
-                }}
+          {NAV_ITEMS.map(
+            (section) => (
+              <div
+                key={section.group}
+                className="nav-group"
               >
-                {section.group}
-              </span>
+                <span className="nav-section-label">
+                  {section.group}
+                </span>
 
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({
-                    isActive,
-                  }) =>
-                    `nav-link ${
-                      isActive
-                        ? "active"
-                        : ""
-                    }`
-                  }
-                  style={({ isActive }) => ({
-                    background:
-                      isActive
-                        ? "var(--surface2)"
-                        : "transparent",
+                {section.items.map(
+                  (item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      className={({
+                        isActive,
+                      }) =>
+                        `nav-link ${
+                          isActive
+                            ? "active"
+                            : ""
+                        }`
+                      }
+                    >
+                      <span className="nav-icon">
+                        {item.icon}
+                      </span>
 
-                    border:
-                      isActive
-                        ? "1px solid var(--border)"
-                        : "1px solid transparent",
+                      <span className="nav-label">
+                        {item.label}
+                      </span>
 
-                    color:
-                      isActive
-                        ? "#dc2626"
-                        : "var(--text)",
-                  })}
-                >
-                  <span className="nav-icon">
-                    {item.icon}
-                  </span>
-
-                  <span className="nav-label">
-                    {item.label}
-                  </span>
-
-                  <ChevronRight
-                    className="nav-chevron"
-                    size={13}
-                  />
-                </NavLink>
-              ))}
-            </div>
-          ))}
+                      <ChevronRight
+                        className="nav-chevron"
+                        size={13}
+                      />
+                    </NavLink>
+                  )
+                )}
+              </div>
+            )
+          )}
         </nav>
 
         {/* FOOTER */}
         <div className="sidebar-footer">
           <div className="sidebar-user">
-            <div
-              className="sidebar-avatar"
-              style={{
-                background:
-                  "var(--surface2)",
-                color: "#dc2626",
-                border:
-                  "1px solid var(--border)",
-              }}
-            >
+            <div className="sidebar-avatar">
               {initials}
             </div>
 
@@ -308,11 +280,6 @@ export default function Sidebar() {
               onClick={handleLogout}
               className="logout-btn"
               title="Sign Out"
-              style={{
-                color: "#dc2626",
-                background:
-                  "transparent",
-              }}
             >
               <LogOut size={16} />
             </button>
